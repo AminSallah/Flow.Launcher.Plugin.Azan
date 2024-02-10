@@ -59,7 +59,15 @@ namespace Flow.Launcher.Plugin.Azan
                                 _prayerTimes[_pray.Key].Add(_pray.Value.Split("(")[0].Trim());
                             string prayTimeString = _pray.Value.Split("(")[0].Trim();
                             TimeSpan TimeDifference = DateTime.Parse(DateTime.Now.ToShortDateString() + " " + prayTimeString) - DateTime.Now;
-                            int Score = 10000 / (int)TimeDifference.TotalMinutes;
+                            int Score;
+                            try 
+                            {
+                                Score = 10000 / (int)TimeDifference.TotalMinutes;
+                            }
+                            catch (DivideByZeroException)
+                            {
+                                Score = 10000;
+                            }
                             _prayerTimes[_pray.Key].Add(Score.ToString());
                             _prayerTimes[_pray.Key].Add(TimeDifference.ToString().Split(".")[0]);
                         }
@@ -67,7 +75,19 @@ namespace Flow.Launcher.Plugin.Azan
                         break;
                     }
                 }
-                var sortedPrayerTimes = _prayerTimes.OrderByDescending(prayer => int.Parse(prayer.Value[1]));
+                var sortedPrayerTimes = _prayerTimes
+                                        .OrderByDescending(prayer =>
+                                        {
+                                            int value = int.Parse(prayer.Value[1]);
+
+                                            if (value < 0 && Math.Abs(value) >  10000 / Convert.ToInt32(_settings.Duration))
+                                            {
+                                                prayer.Value[1] = "100000";
+                                                return int.MinValue + value;
+                                            }
+
+                                            return value;
+                                        });
                 _prayerTimes = sortedPrayerTimes.ToDictionary(prayer => prayer.Key, prayer => prayer.Value);
             }
             return _prayerTimes;
@@ -116,16 +136,9 @@ namespace Flow.Launcher.Plugin.Azan
                         JObject ResponseDates = JObject.Parse(responseBody);
                         return ResponseDates;
                     }
-                    else
-                    {
-                        Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
-                        _context.API.ShowMsgError(response.StatusCode.ToString(), requestUrl);
-
-                    }
                 }
                 catch (Exception ex)
                 {
-                    _context.API.ShowMsgError("error", ex.Message);
                     Console.WriteLine($"Exception: {ex.Message}");
                 }
             }

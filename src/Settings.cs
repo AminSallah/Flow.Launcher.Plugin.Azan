@@ -11,9 +11,31 @@ namespace Flow.Launcher.Plugin.Azan
             UpdateTimings();
         }
         public bool Timeformat24 {get; set;} = false;
+        private string _duration = "30";
+        public string Duration
+        {
+            get
+            {
+                return _duration;
+            }
+            set
+            {
+                if (Convert.ToInt32(value) > 0)
+                {
+                    _duration = value;
+                }
+                else
+                {
+                    _duration = "1";
+                }
+            }
+        }
+
+        public bool HijriDate { get; set;} = true;
 
         private string _latitude = string.Empty;
         private string _longitude = string.Empty;
+
 
         public string Latitude { 
             get

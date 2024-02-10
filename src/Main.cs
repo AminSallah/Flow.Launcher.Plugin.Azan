@@ -16,6 +16,7 @@ namespace Flow.Launcher.Plugin.Azan
         private Settings _settings;
         internal static Prayers _prayers;
         private static SettingsViewModel? _viewModel;
+        private bool CurrentPray = true;
 
         public void Init(PluginInitContext context)
         {
@@ -26,6 +27,8 @@ namespace Flow.Launcher.Plugin.Azan
                 File.WriteAllText(Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, "Timings.json"),"{}");
             _prayers = new Prayers(context,_settings);
             Azan._viewModel = new SettingsViewModel(this._settings);
+            _context.API.RegisterGlobalKeyboardCallback(MyKeyboardCallback);
+
 
 
         }
@@ -42,6 +45,12 @@ namespace Flow.Launcher.Plugin.Azan
         public List<Result> Query(Query query)
         {
             List<Result> resultList = new List<Result>();
+            if (!string.IsNullOrEmpty(query.Search))
+            {
+                CurrentPray = true;
+            }
+            
+
             if (true)
             {
                 foreach (var _pray in _prayers.PrayerTimes)
@@ -58,26 +67,23 @@ namespace Flow.Launcher.Plugin.Azan
 
                         };
                         resultList.Add(result);
-                        if (string.IsNullOrEmpty(query.FirstSearch))
+
+                        if (!CurrentPray)
                         {
                             break;
                         }
-                        else
-                        {
-                            
-                        }
+
                     }
                 }
-                if (!string.IsNullOrEmpty(query.FirstSearch))
+                if (_settings.HijriDate && CurrentPray)
                 {
                     var resultDate = new Result
                     {
                         Title = $"Hijri date",
                         SubTitle = _prayers.HijriDate,
                         RoundedIcon = true,
-                        IcoPath = $"Icons.png",
-                        Score = 10000
-
+                        IcoPath = $"Icons/date.png",
+                        Score = 101000
                     };
                     resultList.Add(resultDate);
                 }
@@ -85,7 +91,23 @@ namespace Flow.Launcher.Plugin.Azan
             }
             return resultList;
         }
+        bool MyKeyboardCallback(int keyCode, int additionalInfo, SpecialKeyState keyState)
+        {
+            if (additionalInfo == 32)
+            {
+                CurrentPray = true;
 
+            }
+            else
+            {
+                CurrentPray = false;
+            }
+
+            // ...
+
+            // Return true if the event was handled, false otherwise
+            return true;
+        }
 
         public Control CreateSettingPanel()
         {

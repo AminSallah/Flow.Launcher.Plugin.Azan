@@ -123,6 +123,41 @@
                 </StackPanel>
             </ItemsControl>
         </Border>
+
+        <Border Style="{DynamicResource SettingGroupBox}">
+            <ItemsControl Style="{StaticResource SettingGrid}">
+                <StackPanel Style="{StaticResource TextPanel}">
+                    <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Home Panel Duration" />
+                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="Time to keep current pray in home panel after it's time" />
+                </StackPanel>
+                <StackPanel
+                    Style="{StaticResource TextPanel}"
+                    Margin="0,0,18,0"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    DockPanel.Dock="Right">
+                    <TextBox
+                    Width="60"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Text="{Binding Settings.Duration}"
+                    TextWrapping="NoWrap" />
+                </StackPanel>
+            </ItemsControl>
+        </Border>
+
+        <Border Style="{DynamicResource SettingGroupBox}">
+            <ItemsControl Style="{StaticResource SettingGrid}">
+                <StackPanel Style="{StaticResource TextPanel}">
+                    <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Hijri Date" />
+                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="" />
+                </StackPanel>
+                <ui:ToggleSwitch
+            Grid.Column="2"
+            IsOn="{Binding Settings.HijriDate}"
+            Style="{DynamicResource SideToggleSwitch}" />
+            </ItemsControl>
+        </Border>
         <Border Style="{DynamicResource SettingGroupBox}">
             <ItemsControl Style="{StaticResource SettingGrid}">
                 <StackPanel Style="{StaticResource TextPanel}">
@@ -130,9 +165,9 @@
                     <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="" />
                 </StackPanel>
                 <ui:ToggleSwitch
-                    Grid.Column="2"
-                    IsOn="{Binding Settings.Timeformat24}"
-                    Style="{DynamicResource SideToggleSwitch}" />
+            Grid.Column="2"
+            IsOn="{Binding Settings.Timeformat24}"
+            Style="{DynamicResource SideToggleSwitch}" />
             </ItemsControl>
         </Border>
         <Border CornerRadius="0,0,9,9" Style="{DynamicResource SettingGroupBox}">

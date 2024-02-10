@@ -6,7 +6,7 @@
     "Author": "Amin",
     "Version": "1.0.0",
     "Language": "csharp",
-    "Website": "https://github.com/Amin/Flow.Launcher.Plugin.Azan",
-    "IcoPath": "icon.png",
+    "Website": "https://github.com/AminSallah/Flow.Launcher.Plugin.Azan",
+    "IcoPath": "Icons/date.png",
     "ExecuteFileName": "Flow.Launcher.Plugin.Azan.dll"
 }
