@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using System.Collections.Generic;
 using Flow.Launcher.Plugin;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
@@ -20,11 +19,18 @@ namespace Flow.Launcher.Plugin.Azan
         private PluginInitContext _context;
 
         private Settings _settings;
+        public Dictionary<string, List<string>> PrayerTimesSorted
+        {
+            get
+            {
+                return GetPrayTime(true);
+            }
+        }
         public Dictionary<string, List<string>> PrayerTimes
         {
             get
             {
-                return GetPrayTime();
+                return GetPrayTime(false);
             }
         }
 
@@ -38,7 +44,7 @@ namespace Flow.Launcher.Plugin.Azan
 
         }
 
-        Dictionary<string, List<string>> GetPrayTime()
+        Dictionary<string, List<string>> GetPrayTime(bool sort = true)
         {
             Dictionary<string, List<string>> _prayerTimes = new Dictionary<string, List<string>>();
             if (TimingsResponse != null)
@@ -49,6 +55,9 @@ namespace Flow.Launcher.Plugin.Azan
                     {
                         foreach (var _pray in day["timings"].ToObject<Dictionary<string, string>>())
                         {
+                            if (_settings.Timings.Contains(_pray.Key))
+                            {
+
                             if (!_prayerTimes.ContainsKey(_pray.Key))
                             {
                                 _prayerTimes[_pray.Key] = new List<string>();
@@ -58,7 +67,8 @@ namespace Flow.Launcher.Plugin.Azan
                             else
                                 _prayerTimes[_pray.Key].Add(_pray.Value.Split("(")[0].Trim());
                             string prayTimeString = _pray.Value.Split("(")[0].Trim();
-                            TimeSpan TimeDifference = DateTime.Parse(DateTime.Now.ToShortDateString() + " " + prayTimeString) - DateTime.Now;
+                            var dateTime = DateTime.Parse(DateTime.Now.ToShortDateString() + " " + prayTimeString);
+                            TimeSpan TimeDifference =  dateTime - DateTime.Now;
                             int Score;
                             try 
                             {
@@ -70,8 +80,22 @@ namespace Flow.Launcher.Plugin.Azan
                             }
                             _prayerTimes[_pray.Key].Add(Score.ToString());
                             _prayerTimes[_pray.Key].Add(TimeDifference.ToString().Split(".")[0]);
+
+                            if (Score < 0 )
+                                            {
+                                                if (Math.Abs(Score) >  (10000 / Convert.ToInt32(_settings.Duration))){         
+                                                _prayerTimes[_pray.Key][1] = "100000";
+                                                }
+                                                else
+                                                {
+                                                    _prayerTimes[_pray.Key][2] = (dateTime - DateTime.Now.AddDays(-1)).ToString().Split(".")[0] ;
+                                                }
+                                            } 
+                            }
                         }
                         HijriDate = $"{day["date"]["hijri"]["day"]} {day["date"]["hijri"]["month"]["en"]} {day["date"]["hijri"]["year"]}";
+                        if (!sort)
+                            return _prayerTimes;
                         break;
                     }
                 }
@@ -80,11 +104,13 @@ namespace Flow.Launcher.Plugin.Azan
                                         {
                                             int value = int.Parse(prayer.Value[1]);
 
-                                            if (value < 0 && Math.Abs(value) >  10000 / Convert.ToInt32(_settings.Duration))
+                                            if (value < 0 )
                                             {
+                                                if (Math.Abs(value) >  (10000 / Convert.ToInt32(_settings.Duration))){         
                                                 prayer.Value[1] = "100000";
                                                 return int.MinValue + value;
-                                            }
+                                                }
+                                            } 
 
                                             return value;
                                         });

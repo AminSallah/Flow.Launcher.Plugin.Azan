@@ -7,6 +7,7 @@ using Flow.Launcher.Plugin.Azan.ViewModels;
 using System.IO;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Linq;
 
 namespace Flow.Launcher.Plugin.Azan
 {
@@ -23,9 +24,9 @@ namespace Flow.Launcher.Plugin.Azan
             _context = context;
             _settings = _context.API.LoadSettingJsonStorage<Settings>();
             //if(!string.IsNullOrEmpty(_settings.Latitude)&& !string.IsNullOrEmpty(_settings.Longitude))
-            if (!File.Exists(Path.Combine(_context.CurrentPluginMetadata.PluginDirectory,"Timings.json")))
-                File.WriteAllText(Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, "Timings.json"),"{}");
-            _prayers = new Prayers(context,_settings);
+            if (!File.Exists(Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, "Timings.json")))
+                File.WriteAllText(Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, "Timings.json"), "{}");
+            _prayers = new Prayers(context, _settings);
             Azan._viewModel = new SettingsViewModel(this._settings);
             _context.API.RegisterGlobalKeyboardCallback(MyKeyboardCallback);
 
@@ -49,31 +50,41 @@ namespace Flow.Launcher.Plugin.Azan
             {
                 CurrentPray = true;
             }
-            
+
 
             if (true)
             {
+                int Score = 100000;
                 foreach (var _pray in _prayers.PrayerTimes)
                 {
-                    if (_settings.Timings.Contains(_pray.Key))
-                        {
-                        var result = new Result
-                        {
-                            Title = $"{_pray.Key}: {_pray.Value[0]}",
-                            SubTitle = _pray.Value[2],
-                            RoundedIcon = true,
-                            IcoPath = $"Icons/{_pray.Key}.png",
-                            Score = Convert.ToInt32(_pray.Value[1])
+                    Score -= 1000;
+                    var result = new Result
+                    {
+                        Title = $"{_pray.Key}",
+                        SubTitle = $"{_pray.Value[2]} | {_pray.Value[0]}",
+                        RoundedIcon = true,
+                        IcoPath = $"Icons/{_pray.Key}.png",
+                        //Score = Convert.ToInt32(_pray.Value[1])
+                        Score = Score
 
-                        };
+                    };
+
+                    if (!CurrentPray && _pray.Key == _prayers.PrayerTimesSorted.Keys.First())
+                    {
+                        resultList.Add(result);
+                        break;
+                    }
+                    else if (!CurrentPray)
+                    {
+                        continue;
+                    }
+                    else
+                    {
                         resultList.Add(result);
 
-                        if (!CurrentPray)
-                        {
-                            break;
-                        }
-
                     }
+
+
                 }
                 if (_settings.HijriDate && CurrentPray)
                 {

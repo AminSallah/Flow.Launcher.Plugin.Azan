@@ -86,7 +86,7 @@
             <ItemsControl Style="{StaticResource SettingGrid}">
                 <StackPanel Style="{StaticResource TextPanel}">
                     <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Adjustmment" />
-                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="Number of days to adjust hijri date(s). Example: 1 or 2 or -1 or -2" />
+                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="Number of days to adjust hijri date. Example: 1 or 2 or -1 or -2" />
                 </StackPanel>
                 <StackPanel
                     Style="{StaticResource TextPanel}"
