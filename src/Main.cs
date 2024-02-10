@@ -111,7 +111,6 @@ namespace Flow.Launcher.Plugin.Azan
                     else
                     {
                         resultList.Add(result);
-
                     }
 
 

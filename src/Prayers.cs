@@ -12,7 +12,7 @@ namespace Flow.Launcher.Plugin.Azan
 {
     class Prayers
     {
-   
+
 
         public JToken TimingsResponse;
 
@@ -48,7 +48,7 @@ namespace Flow.Launcher.Plugin.Azan
         {
             Dictionary<string, List<string>> _prayerTimes = new Dictionary<string, List<string>>();
             if (TimingsResponse != null)
-            { 
+            {
                 foreach (var day in TimingsResponse)
                 {
                     if (day["date"]["gregorian"]["date"].ToString() == DateTime.Now.ToString("dd-MM-yyyy"))
@@ -58,60 +58,51 @@ namespace Flow.Launcher.Plugin.Azan
                             if (_settings.Timings.Contains(_pray.Key))
                             {
 
-                            if (!_prayerTimes.ContainsKey(_pray.Key))
-                            {
-                                _prayerTimes[_pray.Key] = new List<string>();
-                            }
-                            if (!_settings.Timeformat24)
-                                _prayerTimes[_pray.Key].Add(DateTime.ParseExact(_pray.Value.Split("(")[0].Trim(), "HH:mm", null).ToString("hh:mm tt"));
-                            else
-                                _prayerTimes[_pray.Key].Add(_pray.Value.Split("(")[0].Trim());
-                            string prayTimeString = _pray.Value.Split("(")[0].Trim();
-                            var dateTime = DateTime.Parse(DateTime.Now.ToShortDateString() + " " + prayTimeString);
-                            TimeSpan TimeDifference =  dateTime - DateTime.Now;
-                            int Score;
-                            try 
-                            {
-                                Score = 10000 / (int)TimeDifference.TotalMinutes;
-                            }
-                            catch (DivideByZeroException)
-                            {
-                                Score = 10000;
-                            }
-                            _prayerTimes[_pray.Key].Add(Score.ToString());
-                            _prayerTimes[_pray.Key].Add(TimeDifference.ToString().Split(".")[0]);
+                                if (!_prayerTimes.ContainsKey(_pray.Key))
+                                {
+                                    _prayerTimes[_pray.Key] = new List<string>();
+                                }
+                                if (!_settings.Timeformat24)
+                                    _prayerTimes[_pray.Key].Add(DateTime.ParseExact(_pray.Value.Split("(")[0].Trim(), "HH:mm", null).ToString("hh:mm tt"));
+                                else
+                                    _prayerTimes[_pray.Key].Add(_pray.Value.Split("(")[0].Trim());
+                                string prayTimeString = _pray.Value.Split("(")[0].Trim();
+                                var dateTime = DateTime.Parse(DateTime.Now.ToShortDateString() + " " + prayTimeString);
+                                TimeSpan TimeDifference = dateTime - DateTime.Now;
+                                int Score;
+                                try
+                                {
+                                    Score = 1000000 / (int)TimeDifference.TotalMinutes;
+                                }
+                                catch (DivideByZeroException)
+                                {
+                                    Score = 10000000;
+                                }
+                                _prayerTimes[_pray.Key].Add(Score.ToString());
+                                _prayerTimes[_pray.Key].Add(TimeDifference.ToString().Split(".")[0]);
 
-                            if (Score < 0 )
-                                            {
-                                                if (Math.Abs(Score) >  (10000 / Convert.ToInt32(_settings.Duration))){         
-                                                _prayerTimes[_pray.Key][1] = "100000";
-                                                }
-                                                else
-                                                {
-                                                    _prayerTimes[_pray.Key][2] = (dateTime - DateTime.Now.AddDays(-1)).ToString().Split(".")[0] ;
-                                                }
-                                            } 
+                                if (Score < 0)
+                                {
+                                    if (Math.Abs(Score) > (1000000 / Convert.ToInt32(_settings.Duration)) && _pray.Key != "Imsak")
+                                    {
+                                        _prayerTimes[_pray.Key][1] = "10000000";
+                                    }
+                                    else
+                                    {
+                                        _prayerTimes[_pray.Key][2] = (dateTime - DateTime.Now.AddDays(-1)).ToString().Split(".")[0];
+                                    }
+                                }
                             }
                         }
                         HijriDate = $"{day["date"]["hijri"]["day"]} {day["date"]["hijri"]["month"]["en"]} {day["date"]["hijri"]["year"]}";
                         if (!sort)
                             return _prayerTimes;
-                        break;
                     }
                 }
                 var sortedPrayerTimes = _prayerTimes
                                         .OrderByDescending(prayer =>
                                         {
                                             int value = int.Parse(prayer.Value[1]);
-
-                                            if (value < 0 )
-                                            {
-                                                if (Math.Abs(value) >  (10000 / Convert.ToInt32(_settings.Duration))){         
-                                                prayer.Value[1] = "100000";
-                                                return int.MinValue + value;
-                                                }
-                                            } 
-
                                             return value;
                                         });
                 _prayerTimes = sortedPrayerTimes.ToDictionary(prayer => prayer.Key, prayer => prayer.Value);

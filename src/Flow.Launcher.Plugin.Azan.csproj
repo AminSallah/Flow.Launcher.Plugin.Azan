@@ -20,8 +20,11 @@
     <DebugSymbols>false</DebugSymbols>
     <DebugType>None</DebugType>
   </PropertyGroup>
-
   <ItemGroup>
+
+  <None Update="Icons\*">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
     <Content Include="plugin.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
