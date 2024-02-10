@@ -8,6 +8,7 @@ using System.IO;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Linq;
+using System.Net.NetworkInformation;
 
 namespace Flow.Launcher.Plugin.Azan
 {
@@ -49,6 +50,35 @@ namespace Flow.Launcher.Plugin.Azan
             if (!string.IsNullOrEmpty(query.Search))
             {
                 CurrentPray = true;
+            }
+
+            if (string.IsNullOrEmpty(_settings.Latitude) || string.IsNullOrEmpty(_settings.Longitude))
+            {
+                var result = new Result
+                {
+                    Title = "Location Coordinates Missing",
+                    SubTitle = "Please ensure you have provided both latitude and longitude values for the location."
+                };
+                resultList.Add(result);
+                return resultList ;
+            }
+            else if (_prayers.TimingsResponse.Count() == 0)
+            {
+                if (IsInternetConnected())
+                {
+                    _prayers.GetTimingsFromJson();
+                }
+                else
+                {
+                var result = new Result
+                {
+                    Title = "Internet Connection Error",
+                    SubTitle = "Please ensure your internet connection is stable before initiating the plugin."
+                };
+                resultList.Add(result);
+                return resultList ;
+                }
+
             }
 
 
@@ -118,6 +148,21 @@ namespace Flow.Launcher.Plugin.Azan
 
             // Return true if the event was handled, false otherwise
             return true;
+        }
+
+        static bool IsInternetConnected()
+        {
+            try
+            {
+                Ping ping = new Ping();
+                PingReply reply = ping.Send("8.8.8.8", 500);
+
+                return (reply != null && reply.Status == IPStatus.Success);
+            }
+            catch (PingException)
+            {
+                return false;
+            }
         }
 
         public Control CreateSettingPanel()

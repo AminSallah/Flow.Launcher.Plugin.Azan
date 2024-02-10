@@ -14,7 +14,7 @@ namespace Flow.Launcher.Plugin.Azan
     {
    
 
-        private JToken TimingsResponse;
+        public JToken TimingsResponse;
 
         private PluginInitContext _context;
 
