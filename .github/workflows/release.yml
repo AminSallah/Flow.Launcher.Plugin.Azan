@@ -46,4 +46,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: "src/Flow.Launcher.Plugin.Azan.zip"
-          tag_name: "Azan v${{steps.version.outputs.prop}}"
+          tag_name: "v${{steps.version.outputs.prop}}"
