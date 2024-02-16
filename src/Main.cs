@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Controls;
 using Flow.Launcher.Plugin.Azan.Views;
 using Flow.Launcher.Plugin;
 using Flow.Launcher.Plugin.Azan.ViewModels;
 using System.IO;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Device.Location;
 using System.Linq;
 using System.Net.NetworkInformation;
 
@@ -20,6 +21,25 @@ namespace Flow.Launcher.Plugin.Azan
         private static SettingsViewModel? _viewModel;
         private bool CurrentPray = true;
 
+        (string,string) GetMyLocationUsingGPS()
+        {
+            GeoCoordinateWatcher watcher = new GeoCoordinateWatcher(GeoPositionAccuracy.High);
+
+            watcher.TryStart(false, TimeSpan.FromMilliseconds(1000));
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            while (stopwatch.ElapsedMilliseconds < 10000) // Try for 5 seconds
+            {
+                if (watcher.Status == GeoPositionStatus.Ready)
+                {
+                    GeoCoordinate geoPosition = watcher.Position.Location;
+                    string latitude = geoPosition.Latitude.ToString();
+                    string longitude = geoPosition.Longitude.ToString();
+                    return (latitude, longitude);
+                }
+                Task.Delay(100).Wait();
+            }
+            return ("", "");
+        }
         public void Init(PluginInitContext context)
         {
             _context = context;
@@ -27,6 +47,10 @@ namespace Flow.Launcher.Plugin.Azan
             //if(!string.IsNullOrEmpty(_settings.Latitude)&& !string.IsNullOrEmpty(_settings.Longitude))
             if (!File.Exists(Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, "Timings.json")))
                 File.WriteAllText(Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, "Timings.json"), "{}");
+            if (string.IsNullOrEmpty(_settings.Latitude)&& string.IsNullOrEmpty(_settings.Longitude))
+            {
+                (_settings.Latitude,_settings.Longitude) = GetMyLocationUsingGPS();
+            }
             _prayers = new Prayers(context, _settings);
             Azan._viewModel = new SettingsViewModel(this._settings);
             _context.API.RegisterGlobalKeyboardCallback(MyKeyboardCallback);

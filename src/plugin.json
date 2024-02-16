@@ -3,7 +3,7 @@
     "ActionKeyword": "azan",
     "Name": "Azan",
     "Description": "Flow luancher plugin to get prayer times",
-    "Author": "Amin Salah",
+    "Author": "Amin",
     "Version": "1.0.0",
     "Language": "csharp",
     "Website": "https://github.com/AminSallah/Flow.Launcher.Plugin.Azan",

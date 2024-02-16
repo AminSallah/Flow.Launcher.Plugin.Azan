@@ -57,15 +57,20 @@ namespace Flow.Launcher.Plugin.Azan
                         {
                             if (_settings.Timings.Contains(_pray.Key))
                             {
+                                string Name;
+                                if(day["date"]["gregorian"]["weekday"]["en"].ToString() == "Friday" && _pray.Key == "Dhuhr")
+                                    Name = "Al Juma'a";
+                                else
+                                    Name = _pray.Key;
 
-                                if (!_prayerTimes.ContainsKey(_pray.Key))
+                                if (!_prayerTimes.ContainsKey(Name))
                                 {
-                                    _prayerTimes[_pray.Key] = new List<string>();
+                                    _prayerTimes[Name] = new List<string>();
                                 }
                                 if (!_settings.Timeformat24)
-                                    _prayerTimes[_pray.Key].Add(DateTime.ParseExact(_pray.Value.Split("(")[0].Trim(), "HH:mm", null).ToString("hh:mm tt"));
+                                    _prayerTimes[Name].Add(DateTime.ParseExact(_pray.Value.Split("(")[0].Trim(), "HH:mm", null).ToString("hh:mm tt"));
                                 else
-                                    _prayerTimes[_pray.Key].Add(_pray.Value.Split("(")[0].Trim());
+                                    _prayerTimes[Name].Add(_pray.Value.Split("(")[0].Trim());
                                 string prayTimeString = _pray.Value.Split("(")[0].Trim();
                                 var dateTime = DateTime.Parse(DateTime.Now.ToShortDateString() + " " + prayTimeString);
                                 TimeSpan TimeDifference = dateTime - DateTime.Now;
@@ -78,18 +83,18 @@ namespace Flow.Launcher.Plugin.Azan
                                 {
                                     Score = 10000000;
                                 }
-                                _prayerTimes[_pray.Key].Add(Score.ToString());
-                                _prayerTimes[_pray.Key].Add(TimeDifference.ToString().Split(".")[0]);
+                                _prayerTimes[Name].Add(Score.ToString());
+                                _prayerTimes[Name].Add(TimeDifference.ToString().Split(".")[0]);
 
                                 if (Score < 0)
                                 {
-                                    if (Math.Abs(Score) > (1000000 / Convert.ToInt32(_settings.Duration)) && _pray.Key != "Imsak")
+                                    if (Math.Abs(Score) > (1000000 / Convert.ToInt32(_settings.Duration)) && Name != "Imsak")
                                     {
-                                        _prayerTimes[_pray.Key][1] = "10000000";
+                                        _prayerTimes[Name][1] = "10000000";
                                     }
                                     else
                                     {
-                                        _prayerTimes[_pray.Key][2] = (dateTime - DateTime.Now.AddDays(-1)).ToString().Split(".")[0];
+                                        _prayerTimes[Name][2] = (dateTime - DateTime.Now.AddDays(-1)).ToString().Split(".")[0];
                                     }
                                 }
                             }
