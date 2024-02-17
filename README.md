@@ -1,20 +1,26 @@
 # Flow.Launcher.Plugin.Azan
 
-
 ## Features
-- Accuratly prayers times
-- today date using Hijri date
-- Home panel for current pray
+- Accurately calculates prayer times
+- Displays today's date using Hijri date
+- Home panel for the current prayer
 
 ## Installation
 
-1. start by installing the plugin
+1. Start by installing the plugin.
 
-2.Provide Location Coordinates values
-  
-  1. While GPS is turned on if it's accible plugin when restart flow launcher it's gonna get your location (Not recommended due to accuracy)
-  2. Get your Latitude and Longitude values by IP address or any online Map as Google maps
-      - By Ip navigate to any IP Location website as [ipbase.com](https://ipbase.com/)
-          1. Copy Latitude and Longitude values in settings panel
-          2. Trigger the plugin by keyword you should see your timings
-  
+2. Provide Location Coordinates values:
+
+   - While GPS is turned on, the plugin will attempt to automatically retrieve your location. Please note that this method may not be recommended due to accuracy concerns.
+
+   - Alternatively, manually input your Latitude and Longitude values obtained through IP address or any online map service such as Google Maps.
+   
+      - To obtain values by IP address:
+         1. Visit an IP Location website such as [ipbase.com](https://ipbase.com/) or [mapdevelopers.com](https://www.mapdevelopers.com/what-is-my-address.php) by GPS
+         2. Copy the Latitude and Longitude values and paste them in plugin settings panel.
+         3. Trigger the plugin using the designated keyword, and you should see your prayer timings.
+
+**Note:** It is advisable to use the manual input method for location coordinates to ensure accurate prayer timings, if you need further edit of prayer times you can use tune parameter in settings panel.
+
+## Settings pannel Methods
+
