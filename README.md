@@ -14,4 +14,7 @@
   
   1. While GPS is turned on if it's accible plugin when restart flow launcher it's gonna get your location (Not recommended due to accuracy)
   2. Get your Latitude and Longitude values by IP address or any online Map as Google maps
-      - By Ip navigate to any IP Location website as 
+      - By Ip navigate to any IP Location website as [ipbase.com](https://ipbase.com/)
+          1. Copy Latitude and Longitude values in settings panel
+          2. Trigger the plugin by keyword you should see your timings
+  
