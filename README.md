@@ -3,8 +3,7 @@
 ## Features
 - Accurately calculates prayer times
 - Displays today's date using Hijri date
-- Home panel for the current prayer
-
+- Home panel for the current pray
 ## Demo
 
 ![Plugin demo](assets/demo.gif)
