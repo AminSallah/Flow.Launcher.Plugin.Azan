@@ -77,10 +77,22 @@ namespace Flow.Launcher.Plugin.Azan
                (_settings.Latitude,_settings.Longitude) = GetMyLocationUsingGPS();
                 if (string.IsNullOrEmpty(_settings.Latitude) || string.IsNullOrEmpty(_settings.Longitude))
                 {
-                    var result = new Result
+                    var _settingsLoction = new Result
                     {
                         Title = "Location Services Disabled",
-                        SubTitle = "Please enable location services to retrieve coordinates. Alternatively, click to provide them manually in settings.",
+                        SubTitle = "Click to open windows Location Settings.",
+                        Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\ue819"),
+                        Action = c =>
+                            {
+                                _context.API.ShellRun("start ms-settings:privacy-location");
+                                return true;
+                            },
+                    };
+                    resultList.Add(_settingsLoction);
+                    var _settingsFLow = new Result
+                    {
+                        Title = "Location Services Disabled",
+                        SubTitle = "Click to provide them manually in settings.",
                         Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\ue819"),
                         Action = c =>
                             {
@@ -88,7 +100,8 @@ namespace Flow.Launcher.Plugin.Azan
                                 return true;
                             },
                     };
-                    resultList.Add(result);
+                    resultList.Add(_settingsFLow);
+                    return resultList;
                 }
             }
             if (_prayers.TimingsResponse.Count() == 0 && !(string.IsNullOrEmpty(_settings.Latitude) || string.IsNullOrEmpty(_settings.Longitude)))
@@ -103,7 +116,7 @@ namespace Flow.Launcher.Plugin.Azan
                 {
                     Title = "Internet Connection Error",
                     SubTitle = "Please ensure your internet connection is stable before initiating the plugin.",
-                    Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\u26a0"),
+                    Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\ue774"),
                 };
                 resultList.Add(result);
                 return resultList ;
