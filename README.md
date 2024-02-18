@@ -5,6 +5,10 @@
 - Displays today's date using Hijri date
 - Home panel for the current prayer
 
+## Demo
+
+> Under Construction
+
 ## Installation
 
 1. Start by installing the plugin.
