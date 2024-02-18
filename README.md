@@ -7,7 +7,7 @@
 
 ## Demo
 
-![Plugin demo](assets/demo#1.gif)
+![Plugin demo](assets/demo.gif)
 
 ## Installation
 
