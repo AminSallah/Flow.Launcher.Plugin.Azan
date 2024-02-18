@@ -27,7 +27,7 @@ namespace Flow.Launcher.Plugin.Azan
 
             watcher.TryStart(false, TimeSpan.FromMilliseconds(1000));
             Stopwatch stopwatch = Stopwatch.StartNew();
-            while (stopwatch.ElapsedMilliseconds < 10000) // Try for 5 seconds
+            while (stopwatch.ElapsedMilliseconds < 5000) // Try for 10 seconds
             {
                 if (watcher.Status == GeoPositionStatus.Ready)
                 {
@@ -43,20 +43,16 @@ namespace Flow.Launcher.Plugin.Azan
         public void Init(PluginInitContext context)
         {
             _context = context;
-            _settings = _context.API.LoadSettingJsonStorage<Settings>();
-            //if(!string.IsNullOrEmpty(_settings.Latitude)&& !string.IsNullOrEmpty(_settings.Longitude))
             if (!File.Exists(Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, "Timings.json")))
                 File.WriteAllText(Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, "Timings.json"), "{}");
+            _settings = _context.API.LoadSettingJsonStorage<Settings>();
             if (string.IsNullOrEmpty(_settings.Latitude)&& string.IsNullOrEmpty(_settings.Longitude))
             {
                 (_settings.Latitude,_settings.Longitude) = GetMyLocationUsingGPS();
             }
             _prayers = new Prayers(context, _settings);
             Azan._viewModel = new SettingsViewModel(this._settings);
-            _context.API.RegisterGlobalKeyboardCallback(MyKeyboardCallback);
-
-
-
+            _context.API.RegisterGlobalKeyboardCallback(KeyboardCallback);
         }
 
         internal static void LocationUpdated()
@@ -78,15 +74,24 @@ namespace Flow.Launcher.Plugin.Azan
 
             if (string.IsNullOrEmpty(_settings.Latitude) || string.IsNullOrEmpty(_settings.Longitude))
             {
-                var result = new Result
+               (_settings.Latitude,_settings.Longitude) = GetMyLocationUsingGPS();
+                if (string.IsNullOrEmpty(_settings.Latitude) || string.IsNullOrEmpty(_settings.Longitude))
                 {
-                    Title = "Location Coordinates Missing",
-                    SubTitle = "Please ensure you have provided both latitude and longitude values for the location."
-                };
-                resultList.Add(result);
-                return resultList ;
+                    var result = new Result
+                    {
+                        Title = "Location Services Disabled",
+                        SubTitle = "Please enable location services to retrieve coordinates. Alternatively, click to provide them manually in settings.",
+                        Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\ue819"),
+                        Action = c =>
+                            {
+                                _context.API.OpenSettingDialog();
+                                return true;
+                            },
+                    };
+                    resultList.Add(result);
+                }
             }
-            else if (_prayers.TimingsResponse.Count() == 0)
+            if (_prayers.TimingsResponse.Count() == 0 && !(string.IsNullOrEmpty(_settings.Latitude) || string.IsNullOrEmpty(_settings.Longitude)))
             {
                 if (IsInternetConnected())
                 {
@@ -97,16 +102,14 @@ namespace Flow.Launcher.Plugin.Azan
                 var result = new Result
                 {
                     Title = "Internet Connection Error",
-                    SubTitle = "Please ensure your internet connection is stable before initiating the plugin."
+                    SubTitle = "Please ensure your internet connection is stable before initiating the plugin.",
+                    Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\u26a0"),
                 };
                 resultList.Add(result);
                 return resultList ;
                 }
-
             }
-
-
-            if (true)
+            else
             {
                 int Score = 100000;
                 foreach (var _pray in _prayers.PrayerTimes)
@@ -120,7 +123,6 @@ namespace Flow.Launcher.Plugin.Azan
                         IcoPath = $"Icons/{_pray.Key}.png",
                         //Score = Convert.ToInt32(_pray.Value[1])
                         Score = Score
-
                     };
 
                     if (!CurrentPray && _pray.Key == _prayers.PrayerTimesSorted.Keys.First())
@@ -136,7 +138,6 @@ namespace Flow.Launcher.Plugin.Azan
                     {
                         resultList.Add(result);
                     }
-
 
                 }
                 if (_settings.HijriDate && CurrentPray)
@@ -155,21 +156,16 @@ namespace Flow.Launcher.Plugin.Azan
             }
             return resultList;
         }
-        bool MyKeyboardCallback(int keyCode, int additionalInfo, SpecialKeyState keyState)
+        bool KeyboardCallback(int keyCode, int additionalInfo, SpecialKeyState keyState)
         {
             if (additionalInfo == 32)
             {
                 CurrentPray = true;
-
             }
             else
             {
                 CurrentPray = false;
             }
-
-            // ...
-
-            // Return true if the event was handled, false otherwise
             return true;
         }
 
@@ -179,7 +175,6 @@ namespace Flow.Launcher.Plugin.Azan
             {
                 Ping ping = new Ping();
                 PingReply reply = ping.Send("8.8.8.8", 500);
-
                 return (reply != null && reply.Status == IPStatus.Success);
             }
             catch (PingException)
@@ -187,7 +182,6 @@ namespace Flow.Launcher.Plugin.Azan
                 return false;
             }
         }
-
         public Control CreateSettingPanel()
         {
             return new PluginSettings(_context, _settings, Azan._viewModel!);
