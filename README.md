@@ -7,7 +7,7 @@
 
 ## Demo
 
-> Under Construction
+![Plugin demo](assets/demo#1.gif)
 
 ## Installation
 
