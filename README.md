@@ -29,7 +29,8 @@
 
 - A prayer times calculation method. Methods identify various schools of thought about how to compute the timings.
 - If not specified, it defaults to the closest authority based on the location or co-ordinates specified in the API call.
-- This parameter accepts values from 0-12 and 99, as specified below:
+
+This parameter accepts values from 0-12 and 99, as specified below:
   
 0 - Shia Ithna-Ashari  
 
