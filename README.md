@@ -6,7 +6,7 @@
 - Home panel for the current pray
 ## Demo
 
-![Plugin demo](assets/demo.gif)
+![Demo](assets/demo.gif)
 
 ## Installation
 
