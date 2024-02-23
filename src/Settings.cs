@@ -11,6 +11,7 @@ namespace Flow.Launcher.Plugin.Azan
             UpdateTimings();
         }
         public bool Timeformat24 {get; set;} = false;
+        public bool Refresh {get; set;} = true;
         private string _duration = "30";
         public string Duration
         {

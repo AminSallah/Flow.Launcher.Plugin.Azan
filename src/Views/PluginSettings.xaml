@@ -161,6 +161,18 @@
         <Border Style="{DynamicResource SettingGroupBox}">
             <ItemsControl Style="{StaticResource SettingGrid}">
                 <StackPanel Style="{StaticResource TextPanel}">
+                    <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Sticky Home Panel" />
+                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="When enabled, time of current pray will be refreshed every second, to get out of sticky mode press space." />
+                </StackPanel>
+                <ui:ToggleSwitch
+            Grid.Column="2"
+            IsOn="{Binding Settings.Refresh}"
+            Style="{DynamicResource SideToggleSwitch}" />
+            </ItemsControl>
+        </Border>
+        <Border Style="{DynamicResource SettingGroupBox}">
+            <ItemsControl Style="{StaticResource SettingGrid}">
+                <StackPanel Style="{StaticResource TextPanel}">
                     <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Use 24 Timeformat" />
                     <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="" />
                 </StackPanel>

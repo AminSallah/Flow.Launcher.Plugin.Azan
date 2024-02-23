@@ -84,7 +84,7 @@ namespace Flow.Launcher.Plugin.Azan
                                     Score = 10000000;
                                 }
                                 _prayerTimes[Name].Add(Score.ToString());
-                                _prayerTimes[Name].Add(TimeDifference.ToString().Split(".")[0]);
+                                _prayerTimes[Name].Add(TimeDifference.ToString().Split(".")[0].Replace("-", "+ "));
 
                                 if (Score < 0)
                                 {
@@ -94,7 +94,8 @@ namespace Flow.Launcher.Plugin.Azan
                                     }
                                     else
                                     {
-                                        _prayerTimes[Name][2] = (dateTime - DateTime.Now.AddDays(-1)).ToString().Split(".")[0];
+                                        string Count = (dateTime - DateTime.Now.AddDays(-1)).ToString().Split(".")[0];
+                                        _prayerTimes[Name][2] = Count;
                                     }
                                 }
                             }

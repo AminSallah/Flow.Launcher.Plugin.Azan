@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Device.Location;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Threading;
 
 namespace Flow.Launcher.Plugin.Azan
 {
@@ -20,8 +21,11 @@ namespace Flow.Launcher.Plugin.Azan
         internal static Prayers _prayers;
         private static SettingsViewModel? _viewModel;
         private bool CurrentPray = true;
+        private bool Stick = true;
 
-        (string,string) GetMyLocationUsingGPS()
+        public string QueryString = string.Empty;
+
+        (string, string) GetMyLocationUsingGPS()
         {
             GeoCoordinateWatcher watcher = new GeoCoordinateWatcher(GeoPositionAccuracy.High);
 
@@ -46,13 +50,14 @@ namespace Flow.Launcher.Plugin.Azan
             if (!File.Exists(Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, "Timings.json")))
                 File.WriteAllText(Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, "Timings.json"), "{}");
             _settings = _context.API.LoadSettingJsonStorage<Settings>();
-            if (string.IsNullOrEmpty(_settings.Latitude)&& string.IsNullOrEmpty(_settings.Longitude))
+            if (string.IsNullOrEmpty(_settings.Latitude) && string.IsNullOrEmpty(_settings.Longitude))
             {
-                (_settings.Latitude,_settings.Longitude) = GetMyLocationUsingGPS();
+                (_settings.Latitude, _settings.Longitude) = GetMyLocationUsingGPS();
             }
             _prayers = new Prayers(context, _settings);
             Azan._viewModel = new SettingsViewModel(this._settings);
             _context.API.RegisterGlobalKeyboardCallback(KeyboardCallback);
+            _context.API.VisibilityChanged += OnVisibilityChanged;
         }
 
         internal static void LocationUpdated()
@@ -67,6 +72,7 @@ namespace Flow.Launcher.Plugin.Azan
         public List<Result> Query(Query query)
         {
             List<Result> resultList = new List<Result>();
+            QueryString = query.RawQuery;
             if (!string.IsNullOrEmpty(query.Search))
             {
                 CurrentPray = true;
@@ -74,7 +80,7 @@ namespace Flow.Launcher.Plugin.Azan
 
             if (string.IsNullOrEmpty(_settings.Latitude) || string.IsNullOrEmpty(_settings.Longitude))
             {
-               (_settings.Latitude,_settings.Longitude) = GetMyLocationUsingGPS();
+                (_settings.Latitude, _settings.Longitude) = GetMyLocationUsingGPS();
                 if (string.IsNullOrEmpty(_settings.Latitude) || string.IsNullOrEmpty(_settings.Longitude))
                 {
                     var _settingsLoction = new Result
@@ -112,19 +118,20 @@ namespace Flow.Launcher.Plugin.Azan
                 }
                 else
                 {
-                var result = new Result
-                {
-                    Title = "Internet Connection Error",
-                    SubTitle = "Please ensure your internet connection is stable before initiating the plugin.",
-                    Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\ue774"),
-                };
-                resultList.Add(result);
-                return resultList ;
+                    var result = new Result
+                    {
+                        Title = "Internet Connection Error",
+                        SubTitle = "Please ensure your internet connection is stable before initiating the plugin.",
+                        Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\ue774"),
+                    };
+                    resultList.Add(result);
+                    return resultList;
                 }
             }
             else
             {
                 int Score = 100000;
+
                 foreach (var _pray in _prayers.PrayerTimes)
                 {
                     Score -= 1000;
@@ -140,7 +147,32 @@ namespace Flow.Launcher.Plugin.Azan
 
                     if (!CurrentPray && _pray.Key == _prayers.PrayerTimesSorted.Keys.First())
                     {
+                        result.SubTitle = IdentifierCounDown(result.SubTitle);
+
+                        if (_settings.Refresh)
+                        {
+                            Task.Run(async () =>
+                            {
+
+                                ThreadPool.QueueUserWorkItem(state =>
+                                {
+                                    try
+                                    {
+                                        Thread.Sleep(500);
+                                        _context.API.ChangeQuery(_context.CurrentPluginMetadata.ActionKeyword, true);
+                                        Thread.Sleep(500);
+                                    }
+                                    catch
+                                    {
+
+                                    }
+
+                                });
+                            });
+
+                        }
                         resultList.Add(result);
+
                         break;
                     }
                     else if (!CurrentPray)
@@ -169,6 +201,19 @@ namespace Flow.Launcher.Plugin.Azan
             }
             return resultList;
         }
+
+        string IdentifierCounDown(string TimeDifference)
+        {
+            if (TimeDifference.Contains("+"))
+            {
+                return TimeDifference;
+            }
+            else
+            {
+                TimeDifference = "-" + TimeDifference;
+            }
+            return TimeDifference;
+        }
         bool KeyboardCallback(int keyCode, int additionalInfo, SpecialKeyState keyState)
         {
             if (additionalInfo == 32)
@@ -195,9 +240,23 @@ namespace Flow.Launcher.Plugin.Azan
                 return false;
             }
         }
+
+
+        public async void OnVisibilityChanged(object _, VisibilityChangedEventArgs e)
+        {
+            if (!e.IsVisible)
+            {
+                CurrentPray = true;
+            }
+        }
         public Control CreateSettingPanel()
         {
             return new PluginSettings(_context, _settings, Azan._viewModel!);
+        }
+
+        public void Dispose()
+        {
+            _context.API.VisibilityChanged -= OnVisibilityChanged;
         }
     }
 }
