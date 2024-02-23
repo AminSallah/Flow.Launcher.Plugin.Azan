@@ -21,8 +21,6 @@ namespace Flow.Launcher.Plugin.Azan
         internal static Prayers _prayers;
         private static SettingsViewModel? _viewModel;
         private bool CurrentPray = true;
-        private bool Stick = true;
-
         public string QueryString = string.Empty;
 
         (string, string) GetMyLocationUsingGPS()
@@ -57,7 +55,6 @@ namespace Flow.Launcher.Plugin.Azan
             _prayers = new Prayers(context, _settings);
             Azan._viewModel = new SettingsViewModel(this._settings);
             _context.API.RegisterGlobalKeyboardCallback(KeyboardCallback);
-            _context.API.VisibilityChanged += OnVisibilityChanged;
         }
 
         internal static void LocationUpdated()
@@ -151,25 +148,12 @@ namespace Flow.Launcher.Plugin.Azan
 
                         if (_settings.Refresh)
                         {
-                            Task.Run(async () =>
+                            Task.Run(() =>
                             {
-
-                                ThreadPool.QueueUserWorkItem(state =>
-                                {
-                                    try
-                                    {
-                                        Thread.Sleep(500);
-                                        _context.API.ChangeQuery(_context.CurrentPluginMetadata.ActionKeyword, true);
-                                        Thread.Sleep(500);
-                                    }
-                                    catch
-                                    {
-
-                                    }
-
-                                });
+                                Thread.Sleep(500);
+                                _context.API.ReQuery();
+                                Thread.Sleep(500);
                             });
-
                         }
                         resultList.Add(result);
 
@@ -240,23 +224,10 @@ namespace Flow.Launcher.Plugin.Azan
                 return false;
             }
         }
-
-
-        public async void OnVisibilityChanged(object _, VisibilityChangedEventArgs e)
-        {
-            if (!e.IsVisible)
-            {
-                CurrentPray = true;
-            }
-        }
         public Control CreateSettingPanel()
         {
             return new PluginSettings(_context, _settings, Azan._viewModel!);
         }
 
-        public void Dispose()
-        {
-            _context.API.VisibilityChanged -= OnVisibilityChanged;
-        }
     }
 }

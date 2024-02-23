@@ -4,7 +4,7 @@
     "Name": "Azan",
     "Description": "A plugin to display prayer times.",
     "Author": "Amin Salah",
-    "Version": "2.0.0",
+    "Version": "3.0.0",
     "Language": "csharp",
     "Website": "https://github.com/AminSallah/Flow.Launcher.Plugin.Azan",
     "IcoPath": "Icons/date.png",
