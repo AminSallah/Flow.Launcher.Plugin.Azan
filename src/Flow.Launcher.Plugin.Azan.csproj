@@ -37,8 +37,6 @@
     <Reference Include="System.Device">
       <HintPath>C:\Users\mohammed\Desktop\System.Device_dll_c6d9f36a100f5f67ce3d4badb18bc8e6\System.Device.dll</HintPath>
     </Reference>
-    <Reference Include="Flow.Launcher.Plugin">
-      <HintPath>C:\Users\mohammed\Desktop\Flow.Launcher.Plugin.Azan-2.0.0\Flow.Launcher.Plugin.Azan-2.0.0\src\Flow.Launcher.Plugin.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Flow.Launcher.Plugin" Version="4.3.0" />
   </ItemGroup>
 </Project>
