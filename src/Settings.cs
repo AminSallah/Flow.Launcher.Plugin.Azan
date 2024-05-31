@@ -72,7 +72,7 @@ namespace Flow.Launcher.Plugin.Azan
 
         }
 
-        private string _sync = "Yearly";
+        private string _sync = "Monthly";
         public string Sync 
         {
             get
