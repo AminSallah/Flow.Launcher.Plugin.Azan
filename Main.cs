@@ -11,7 +11,6 @@ using System.Device.Location;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading;
-using System.Globalization;
 
 namespace Flow.Launcher.Plugin.Azan
 {
@@ -46,8 +45,6 @@ namespace Flow.Launcher.Plugin.Azan
         public void Init(PluginInitContext context)
         {
             _context = context;
-            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("en-US");
-            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-US");
             if (!File.Exists(Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, "Timings.json")))
                 File.WriteAllText(Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, "Timings.json"), "{}");
             _settings = _context.API.LoadSettingJsonStorage<Settings>();
@@ -67,59 +64,6 @@ namespace Flow.Launcher.Plugin.Azan
                 _prayers.GetTimingsFromJson();
 
             });
-        }
-
-        void LogDebug()
-        {
-            string timingsfirstDate = string.Empty;
-            if (_settings.Sync == "Monthly")
-            {
-                if (_prayers.TimingsResponse is Newtonsoft.Json.Linq.JObject timingsMonth)
-                {   
-                    if(timingsMonth.ContainsKey("1"))
-                        timingsfirstDate = null;
-                    else
-                        timingsfirstDate = _prayers.TimingsResponse.First()["date"]["gregorian"]["date"].ToString();
-                }
-                else
-                {
-                    timingsfirstDate = "Unable to case";
-                }
-            }
-            else
-            {
-                if (_prayers.TimingsResponse is Newtonsoft.Json.Linq.JObject timingsYear)
-                {
-                    if(timingsYear.ContainsKey("1"))
-                        timingsfirstDate = _prayers.TimingsResponse["1"].First()["date"]["gregorian"]["date"].ToString();
-                    else
-                        timingsfirstDate = null;
-                }
-                else
-                {
-                    timingsfirstDate = "Unable to case";
-                }
-            }
-            var logData = new Dictionary<string, object>
-            {
-                { "log_date", DateTime.Now },
-                { "internet", IsInternetConnected() },
-                { "url", _prayers.ParseUrlTimingsForMonth() },
-                { "sync_automatically", _settings.SyncAutomatically },
-                { "sync_type", _settings.Sync },
-                { "curr_year", DateTime.Now.Year },
-                { "curr_month", DateTime.Now.Month },
-                { "timings_count", _prayers.TimingsResponse.Count() },
-                { "timings_date_first",  timingsfirstDate}
-            };
-
-            string logText = System.Text.Json.JsonSerializer.Serialize(logData, new System.Text.Json.JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
-            File.WriteAllText(_context.CurrentPluginMetadata.PluginDirectory + "\\Azan.Log.json", logText);
-            _context.API.ShowMsg("Azan.Main Error", "Azan failed to retreive prayer times. Please, see log file in plugin directory.");
-
         }
 
         public List<Result> Query(Query query)
@@ -167,7 +111,7 @@ namespace Flow.Launcher.Plugin.Azan
             {
                 if (IsInternetConnected())
                 {
-                    _prayers.GetTimingsFromJson(true);
+                    _prayers.GetTimingsFromJson();
                 }
                 else
                 {
@@ -180,23 +124,11 @@ namespace Flow.Launcher.Plugin.Azan
                     resultList.Add(result);
                     return resultList;
                 }
-
-
             }
             else
             {
                 int Score = 100000;
 
-                if (_prayers.PrayerTimes.Count() == 0)
-                {
-                    if (IsInternetConnected())
-                        _prayers.GetTimingsFromJson(true);
-
-                    if (_prayers.PrayerTimes.Count() == 0)
-                    {
-                        LogDebug();
-                    }
-                }
                 foreach (var _pray in _prayers.PrayerTimes)
                 {
                     Score -= 1000;

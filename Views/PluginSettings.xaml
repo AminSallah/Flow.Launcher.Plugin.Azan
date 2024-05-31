@@ -30,8 +30,7 @@
                     HorizontalAlignment="Right"
                     DockPanel.Dock="Right">
                     <TextBox
-                        MinWidth="100"
-                        MaxWidth="360"
+                        Width="360"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                         Text="{Binding Settings.Longitude}"
@@ -51,8 +50,7 @@
             HorizontalAlignment="Right"
             DockPanel.Dock="Right">
                     <TextBox
-                    MinWidth="100"
-                    MaxWidth="360"
+                Width="360"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Text="{Binding Settings.Latitude}"
@@ -65,15 +63,21 @@
             <ItemsControl Style="{StaticResource SettingGrid}">
                 <StackPanel Style="{StaticResource TextPanel}">
                     <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Tune parameter" />
-                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="Accepts comma separated values (denoting addition / substraction in minutes) \n in the following order: \n (Imsak,Fajr,Sunrise,Dhuhr,Asr,Maghrib,Sunset,Isha,Midnight) Eexample: 0,-5,-4,1" />
-                    
-                    <TextBox
-                    HorizontalAlignment="Right"
+                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="Accepts comma separated values (denoting addition / substraction in minutes)" />
+                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" MaxWidth="455" Text="in the following order (Imsak,Fajr,Sunrise,Dhuhr,Asr,Maghrib,Sunset,Isha,Midnight) Eexample: 0,-5,-4,1)" />
+                </StackPanel>
+                <StackPanel
+                    Style="{StaticResource TextPanel}"
                     Margin="0,0,18,0"
-                    Width="Auto"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    DockPanel.Dock="Right">
+                    <TextBox
+                    Width="360"
+                    HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Text="{Binding Settings.Tune}"
-                    TextWrapping="WrapWithOverflow" />
+                    TextWrapping="NoWrap" />    
                 </StackPanel>
             </ItemsControl>
         </Border>
@@ -146,7 +150,7 @@
             <ItemsControl Style="{StaticResource SettingGrid}">
                 <StackPanel Style="{StaticResource TextPanel}">
                     <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Hijri Date" />
-                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="When enabled, the Hijri Date will be displayed at the top of the prayers menu." />
+                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="" />
                 </StackPanel>
                 <ui:ToggleSwitch
             Grid.Column="2"
@@ -169,8 +173,8 @@
         <Border Style="{DynamicResource SettingGroupBox}">
             <ItemsControl Style="{StaticResource SettingGrid}">
                 <StackPanel Style="{StaticResource TextPanel}">
-                    <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="24 Timeformat" />
-                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="When enabled, prayer times will be displayed in a 24-hour time format." />
+                    <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Use 24 Timeformat" />
+                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="" />
                 </StackPanel>
                 <ui:ToggleSwitch
             Grid.Column="2"
@@ -178,25 +182,12 @@
             Style="{DynamicResource SideToggleSwitch}" />
             </ItemsControl>
         </Border>
-
-        <Border Style="{DynamicResource SettingGroupBox}">
-            <ItemsControl Style="{StaticResource SettingGrid}">
-                <StackPanel Style="{StaticResource TextPanel}">
-                    <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Sync Automatically" />
-                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="When enabled, the plugin will automatically refresh the cache when Flow Launcher starts." />
-                </StackPanel>
-                <ui:ToggleSwitch
-            Grid.Column="2"
-            IsOn="{Binding Settings.SyncAutomatically}"
-            Style="{DynamicResource SideToggleSwitch}" />
-            </ItemsControl>
-        </Border>
         
         <Border Style="{DynamicResource SettingGroupBox}">
     <ItemsControl Style="{StaticResource SettingGrid}">
         <StackPanel Style="{StaticResource TextPanel}">
-            <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Data Query Span" />
-            <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="Indicates whether the API should be queried for data on a yearly or monthly basis." />
+            <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Sync" />
+            <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="" />
         </StackPanel>
         <ComboBox x:Name="SyncComboBox" Grid.Column="2" ItemsSource="{Binding SyncOptions}" SelectedItem="{Binding SyncProperty}" Margin="0,0,25,0">
             

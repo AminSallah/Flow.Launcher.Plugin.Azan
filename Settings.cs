@@ -87,21 +87,6 @@ namespace Flow.Launcher.Plugin.Azan
 
         }
 
-        private bool _syncAutomatically = true;
-        public bool SyncAutomatically
-        {
-            get
-            {
-                return _syncAutomatically;
-            }
-            set
-            {
-                _syncAutomatically = value;
-                Azan.LocationUpdated();
-            }
-
-        }
-
         private string _tune;
         public string Tune
         {
