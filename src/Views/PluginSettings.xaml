@@ -62,20 +62,29 @@
         </Border>
 
         <Border Style="{DynamicResource SettingGroupBox}">
-            <ItemsControl Style="{StaticResource SettingGrid}">
-                <StackPanel Style="{StaticResource TextPanel}">
-                    <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Tune parameter" />
-                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="Accepts comma separated values (denoting addition / substraction in minutes) \n in the following order: \n (Imsak,Fajr,Sunrise,Dhuhr,Asr,Maghrib,Sunset,Isha,Midnight) Eexample: 0,-5,-4,1" />
-                    
-                    <TextBox
-                    HorizontalAlignment="Right"
-                    Margin="0,0,18,0"
-                    Width="Auto"
-                    VerticalAlignment="Center"
-                    Text="{Binding Settings.Tune}"
-                    TextWrapping="WrapWithOverflow" />
-                </StackPanel>
-            </ItemsControl>
+            <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Margin="0,0,18,0">
+            <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Tune parameter" />
+            <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="Accepts comma separated values (denoting addition / substraction in minutes)" />
+            <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="in the following order" />
+            <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="(Imsak, Fajr, Sunrise, Dhuhr, Asr, Maghrib, Sunset, Isha, Midnight)" />
+            <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="Example: 0, -5, -4, 1" />
+        </StackPanel>
+
+        <TextBox Grid.Column="1"
+                 MinWidth="100"
+                 MaxWidth="360"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Center"
+                 Text="{Binding Settings.Tune}"
+                 TextWrapping="NoWrap"
+                 Margin="0,0,18,0"/>
+    </Grid>
         </Border>
 
         <Border Style="{DynamicResource SettingGroupBox}">
