@@ -12,6 +12,8 @@ namespace Flow.Launcher.Plugin.Azan
         }
         public bool Timeformat24 {get; set;} = false;
         public bool Refresh {get; set;} = true;
+
+        
         private string _duration = "30";
         public string Duration
         {
@@ -66,6 +68,36 @@ namespace Flow.Launcher.Plugin.Azan
                 {
                     Azan.LocationUpdated();
                 }
+            }
+
+        }
+
+        private string _sync = "Yearly";
+        public string Sync 
+        {
+            get
+            {
+                return _sync;
+            }
+            set
+            {
+                _sync = value;
+                Azan.LocationUpdated();
+            }
+
+        }
+
+        private bool _syncAutomatically = true;
+        public bool SyncAutomatically
+        {
+            get
+            {
+                return _syncAutomatically;
+            }
+            set
+            {
+                _syncAutomatically = value;
+                Azan.LocationUpdated();
             }
 
         }

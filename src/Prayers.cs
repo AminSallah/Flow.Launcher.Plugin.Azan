@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.IO;
+using System.Globalization;
 
 namespace Flow.Launcher.Plugin.Azan
 {
@@ -38,6 +39,8 @@ namespace Flow.Launcher.Plugin.Azan
 
         internal Prayers(PluginInitContext context, Settings settings)
         {
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("en-US");
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-US");
             this._context = context;
             this._settings = settings;
             GetTimingsFromJson();
@@ -49,16 +52,41 @@ namespace Flow.Launcher.Plugin.Azan
             Dictionary<string, List<string>> _prayerTimes = new Dictionary<string, List<string>>();
             if (TimingsResponse != null)
             {
-                foreach (var day in TimingsResponse)
+                JToken timingsResponseMonth;
+                if (_settings.Sync != "Monthly")
                 {
-                    if (day["date"]["gregorian"]["date"].ToString() == DateTime.Now.ToString("dd-MM-yyyy"))
+                    try
+                    {
+                        timingsResponseMonth = TimingsResponse[DateTime.Now.Month.ToString(new CultureInfo("en-US"))];
+                    }
+                    catch
+                    {
+                        timingsResponseMonth = JToken.FromObject(new object());
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        timingsResponseMonth = TimingsResponse;
+                        var isValid = timingsResponseMonth.First()["date"]["gregorian"]["date"];
+                    }
+                    catch
+                    {
+                        timingsResponseMonth = JToken.FromObject(new object());
+                    }
+                    
+                }
+                foreach (var day in timingsResponseMonth)
+                {
+                    if (day["date"]["gregorian"]["date"].ToString() == DateTime.Now.ToString("dd-MM-yyyy", new CultureInfo("en-US")))
                     {
                         foreach (var _pray in day["timings"].ToObject<Dictionary<string, string>>())
                         {
                             if (_settings.Timings.Contains(_pray.Key))
                             {
                                 string Name;
-                                if(day["date"]["gregorian"]["weekday"]["en"].ToString() == "Friday" && _pray.Key == "Dhuhr")
+                                if (day["date"]["gregorian"]["weekday"]["en"].ToString() == "Friday" && _pray.Key == "Dhuhr")
                                     Name = "Al Juma'a";
                                 else
                                     Name = _pray.Key;
@@ -68,7 +96,7 @@ namespace Flow.Launcher.Plugin.Azan
                                     _prayerTimes[Name] = new List<string>();
                                 }
                                 if (!_settings.Timeformat24)
-                                    _prayerTimes[Name].Add(DateTime.ParseExact(_pray.Value.Split("(")[0].Trim(), "HH:mm", null).ToString("hh:mm tt"));
+                                    _prayerTimes[Name].Add(DateTime.ParseExact(_pray.Value.Split("(")[0].Trim(), "HH:mm", null).ToString("hh:mm tt", new CultureInfo("en-US")));
                                 else
                                     _prayerTimes[Name].Add(_pray.Value.Split("(")[0].Trim());
                                 string prayTimeString = _pray.Value.Split("(")[0].Trim();
@@ -116,26 +144,53 @@ namespace Flow.Launcher.Plugin.Azan
             return _prayerTimes;
         }
 
-        public void GetTimingsFromJson()
+        public void GetTimingsFromJson(bool force = false)
         {
-            JObject ResponseDates = FireAPIRequest();
-
-            if (ResponseDates.ContainsKey("data"))
+            if (_settings.SyncAutomatically || force)
             {
-                TimingsResponse = ResponseDates["data"];
-                File.WriteAllText(Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, "Timings.json"), JsonConvert.SerializeObject(TimingsResponse));
+                JObject ResponseDates = FireAPIRequest();
+
+                if (ResponseDates.ContainsKey("data"))
+                {
+                    TimingsResponse = ResponseDates["data"];
+                    File.WriteAllText(Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, "Timings.json"), JsonConvert.SerializeObject(TimingsResponse));
+                }
+                else
+                {
+                    string jsonString = File.ReadAllText(Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, "Timings.json"));
+                    TimingsResponse = JsonConvert.DeserializeObject<JToken>(jsonString);
+                }
             }
             else
             {
                 string jsonString = File.ReadAllText(Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, "Timings.json"));
+                if (string.IsNullOrEmpty(jsonString))
+                {
+                    JObject ResponseDates = FireAPIRequest();
+                    if (ResponseDates.ContainsKey("data") && ResponseDates["data"].Count() != 0)
+                    {
+                        TimingsResponse = ResponseDates["data"];
+                        File.WriteAllText(Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, "Timings.json"), JsonConvert.SerializeObject(TimingsResponse));
+                        return;
+                    }
+                }
                 TimingsResponse = JsonConvert.DeserializeObject<JToken>(jsonString);
             }
+
         }
 
-        string ParseUrlTimingsForMonth()
+        public string ParseUrlTimingsForMonth()
         {
             string apiUrl = "http://api.aladhan.com/v1/calendar";
-            string requestUrl = $"{apiUrl}/{DateTime.Now.Year}/{DateTime.Now.Month}?latitude={_settings.Latitude}&longitude={_settings.Longitude}";
+            string requestUrl = string.Empty;
+            if (_settings.Sync == "Monthly")
+            {
+                requestUrl = $"{apiUrl}/{DateTime.Now.Year}/{DateTime.Now.Month}?latitude={_settings.Latitude}&longitude={_settings.Longitude}";
+            }
+            else
+            {
+                requestUrl = $"{apiUrl}/{DateTime.Now.Year}?latitude={_settings.Latitude}&longitude={_settings.Longitude}";
+            }
             if (!string.IsNullOrEmpty(_settings.Method))
                 requestUrl = requestUrl + $"&method={_settings.Method}";
             if (!string.IsNullOrEmpty(_settings.Tune))
