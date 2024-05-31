@@ -1,0 +1,245 @@
+<UserControl
+    x:Class="Flow.Launcher.Plugin.Azan.Views.PluginSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:vm="clr-namespace:Flow.Launcher.Plugin.Azan.Views"
+    d:DesignWidth="900"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ThemeResources />
+                <ResourceDictionary Source="/Flow.Launcher.Plugin.Azan;component/Views/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <StackPanel Margin="25,0,25,25">
+        <Border Style="{DynamicResource SettingGroupBox}">
+            <ItemsControl Style="{StaticResource SettingGrid}">
+                <StackPanel Style="{StaticResource TextPanel}">
+                    <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Longitude" />
+                </StackPanel>
+                <StackPanel
+                    Style="{StaticResource TextPanel}"
+                    Margin="0,0,18,0"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    DockPanel.Dock="Right">
+                    <TextBox
+                        Width="360"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Text="{Binding Settings.Longitude}"
+                        TextWrapping="NoWrap" />
+                </StackPanel>
+            </ItemsControl>
+        </Border>
+        <Border Style="{DynamicResource SettingGroupBox}">
+            <ItemsControl Style="{StaticResource SettingGrid}">
+                <StackPanel Style="{StaticResource TextPanel}">
+                    <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Latitude" />
+                </StackPanel>
+                <StackPanel
+            Style="{StaticResource TextPanel}"
+            Margin="0,0,18,0"
+            Orientation="Horizontal"
+            HorizontalAlignment="Right"
+            DockPanel.Dock="Right">
+                    <TextBox
+                Width="360"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Text="{Binding Settings.Latitude}"
+                TextWrapping="NoWrap" />
+                </StackPanel>
+            </ItemsControl>
+        </Border>
+
+        <Border Style="{DynamicResource SettingGroupBox}">
+            <ItemsControl Style="{StaticResource SettingGrid}">
+                <StackPanel Style="{StaticResource TextPanel}">
+                    <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Tune parameter" />
+                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="Accepts comma separated values (denoting addition / substraction in minutes)" />
+                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" MaxWidth="455" Text="in the following order (Imsak,Fajr,Sunrise,Dhuhr,Asr,Maghrib,Sunset,Isha,Midnight) Eexample: 0,-5,-4,1)" />
+                </StackPanel>
+                <StackPanel
+                    Style="{StaticResource TextPanel}"
+                    Margin="0,0,18,0"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    DockPanel.Dock="Right">
+                    <TextBox
+                    Width="360"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Text="{Binding Settings.Tune}"
+                    TextWrapping="NoWrap" />    
+                </StackPanel>
+            </ItemsControl>
+        </Border>
+
+        <Border Style="{DynamicResource SettingGroupBox}">
+            <ItemsControl Style="{StaticResource SettingGrid}">
+                <StackPanel Style="{StaticResource TextPanel}">
+                    <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Adjustmment" />
+                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="Number of days to adjust hijri date. Example: 1 or 2 or -1 or -2" />
+                </StackPanel>
+                <StackPanel
+                    Style="{StaticResource TextPanel}"
+                    Margin="0,0,18,0"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    DockPanel.Dock="Right">
+                    <TextBox
+                    Width="60"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Text="{Binding Settings.Adjustment}"
+                    TextWrapping="NoWrap" />
+                </StackPanel>
+            </ItemsControl>
+        </Border>
+        <Border Style="{DynamicResource SettingGroupBox}">
+            <ItemsControl Style="{StaticResource SettingGrid}">
+                <StackPanel Style="{StaticResource TextPanel}">
+                    <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Method" />
+                </StackPanel>
+                <StackPanel
+            Style="{StaticResource TextPanel}"
+            Margin="0,0,18,0"
+            Orientation="Horizontal"
+            HorizontalAlignment="Right"
+            DockPanel.Dock="Right">
+                    <TextBox
+            Width="60"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Text="{Binding Settings.Method}"
+            TextWrapping="NoWrap" />
+                </StackPanel>
+            </ItemsControl>
+        </Border>
+
+        <Border Style="{DynamicResource SettingGroupBox}">
+            <ItemsControl Style="{StaticResource SettingGrid}">
+                <StackPanel Style="{StaticResource TextPanel}">
+                    <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Home Panel Duration" />
+                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="Time to keep current pray in home panel after it's time" />
+                </StackPanel>
+                <StackPanel
+                    Style="{StaticResource TextPanel}"
+                    Margin="0,0,18,0"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    DockPanel.Dock="Right">
+                    <TextBox
+                    Width="60"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Text="{Binding Settings.Duration}"
+                    TextWrapping="NoWrap" />
+                </StackPanel>
+            </ItemsControl>
+        </Border>
+
+        <Border Style="{DynamicResource SettingGroupBox}">
+            <ItemsControl Style="{StaticResource SettingGrid}">
+                <StackPanel Style="{StaticResource TextPanel}">
+                    <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Hijri Date" />
+                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="" />
+                </StackPanel>
+                <ui:ToggleSwitch
+            Grid.Column="2"
+            IsOn="{Binding Settings.HijriDate}"
+            Style="{DynamicResource SideToggleSwitch}" />
+            </ItemsControl>
+        </Border>
+        <Border Style="{DynamicResource SettingGroupBox}">
+            <ItemsControl Style="{StaticResource SettingGrid}">
+                <StackPanel Style="{StaticResource TextPanel}">
+                    <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Sticky Home Panel" />
+                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="When enabled, time of current pray will be refreshed every second, to get out of sticky mode press space." />
+                </StackPanel>
+                <ui:ToggleSwitch
+            Grid.Column="2"
+            IsOn="{Binding Settings.Refresh}"
+            Style="{DynamicResource SideToggleSwitch}" />
+            </ItemsControl>
+        </Border>
+        <Border Style="{DynamicResource SettingGroupBox}">
+            <ItemsControl Style="{StaticResource SettingGrid}">
+                <StackPanel Style="{StaticResource TextPanel}">
+                    <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Use 24 Timeformat" />
+                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="" />
+                </StackPanel>
+                <ui:ToggleSwitch
+            Grid.Column="2"
+            IsOn="{Binding Settings.Timeformat24}"
+            Style="{DynamicResource SideToggleSwitch}" />
+            </ItemsControl>
+        </Border>
+        
+        <Border Style="{DynamicResource SettingGroupBox}">
+    <ItemsControl Style="{StaticResource SettingGrid}">
+        <StackPanel Style="{StaticResource TextPanel}">
+            <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Sync" />
+            <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="" />
+        </StackPanel>
+        <ComboBox x:Name="SyncComboBox" Grid.Column="2" ItemsSource="{Binding SyncOptions}" SelectedItem="{Binding SyncProperty}" Margin="0,0,25,0">
+            
+        </ComboBox>
+    </ItemsControl>
+</Border>
+
+
+        <Border CornerRadius="0,0,9,9" Style="{DynamicResource SettingGroupBox}">
+            <Expander
+                Margin="-18,0,0,0"
+                Padding="0"
+                BorderThickness="0"
+                Style="{StaticResource ExpanderStyle1}">
+            <Expander.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="13*"/>
+                        <RowDefinition Height="9*"/>
+                    </Grid.RowDefinitions>
+                    <ItemsControl Margin="0,0,0,0" Style="{StaticResource SettingGrid}" HorizontalAlignment="Left" Grid.RowSpan="2">
+                        <ui:FontIcon
+                            Grid.Column="0"
+                            Glyph="&#xe819;"
+                            Style="{StaticResource Glyph}" />
+                        <TextBlock
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Style="{DynamicResource SettingTitleLabel}"
+                            Text="Prayers" />
+                    </ItemsControl>
+                </Grid>
+            </Expander.Header>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <CheckBox Content="Imsak"  Margin="7"  IsChecked="{Binding Settings.Imsak}"/>
+                    <CheckBox Content="Fajr"  Margin="7"  IsChecked="{Binding Settings.Fajr}"/>
+                    <CheckBox Content="Sunrise"  Margin="7"  IsChecked="{Binding Settings.Sunrise}"/>
+                    <CheckBox Content="Dhuhr" Margin="7"  IsChecked="{Binding Settings.Dhuhr}"/>
+                    <CheckBox Content="Asr"  Margin="7"  IsChecked="{Binding Settings.Asr}"/>
+                    <CheckBox Content="Maghrib"  Margin="7"  IsChecked="{Binding Settings.Maghrib}"/>
+                    <CheckBox Content="Sunset"  Margin="7"  IsChecked="{Binding Settings.Sunset}"/>
+                    <CheckBox Content="Isha"  Margin="7"  IsChecked="{Binding Settings.Isha}"/>
+                    <CheckBox Content="Firstthird"  Margin="7"  IsChecked="{Binding Settings.Firstthird}"/>
+                    <CheckBox Content="Lastthird"  Margin="7"  IsChecked="{Binding Settings.Lastthird}"/>
+                </StackPanel>
+            </Expander>
+        </Border>
+
+
+
+        
+
+        
+    </StackPanel>
+</UserControl>
