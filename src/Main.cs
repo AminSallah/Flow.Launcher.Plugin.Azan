@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Globalization;
+using System.ComponentModel;
 
 namespace Flow.Launcher.Plugin.Azan
 {
@@ -58,7 +59,10 @@ namespace Flow.Launcher.Plugin.Azan
             _prayers = new Prayers(context, _settings);
             Azan._viewModel = new SettingsViewModel(this._settings);
             _context.API.RegisterGlobalKeyboardCallback(KeyboardCallback);
+
         }
+
+        
 
         internal static void LocationUpdated()
         {
@@ -187,6 +191,8 @@ namespace Flow.Launcher.Plugin.Azan
             {
                 int Score = 100000;
 
+                
+
                 if (_prayers.PrayerTimes.Count() == 0)
                 {
                     if (IsInternetConnected())
@@ -197,57 +203,74 @@ namespace Flow.Launcher.Plugin.Azan
                         LogDebug();
                     }
                 }
-                foreach (var _pray in _prayers.PrayerTimes)
-                {
-                    Score -= 1000;
-                    var result = new Result
+
+                
+                if (_settings.Globally && query.RawQuery.StartsWith(_context.CurrentPluginMetadata.ActionKeyword) || !_settings.Globally) {
+                   
+
+                    foreach (var _pray in _prayers.PrayerTimes)
+                    {
+                        Score -= 1000;
+                        var result = new Result
+                        {
+                            Title = $"{_pray.Key}",
+                            SubTitle = $"{_pray.Value[2]} | {_pray.Value[0]}",
+                            RoundedIcon = true,
+                            IcoPath = $"Icons/{_pray.Key}.png",
+                            //Score = Convert.ToInt32(_pray.Value[1])
+                            Score = Score
+                        };
+
+                        if (!CurrentPray && _pray.Key == _prayers.PrayerTimesSorted.Keys.First())
+                        {
+                            result.SubTitle = IdentifierCounDown(result.SubTitle);
+
+                            if (_settings.Refresh)
+                            {
+                                Task.Run(() =>
+                                {
+                                    Thread.Sleep(500);
+                                    _context.API.ReQuery();
+                                    Thread.Sleep(500);
+                                });
+                            }
+                            resultList.Add(result);
+
+                            break;
+                        }
+                        else if (!CurrentPray)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            resultList.Add(result);
+                        }
+
+                    }
+                    if (_settings.HijriDate && CurrentPray)
+                    {
+                        var resultDate = new Result
+                        {
+                            Title = $"Hijri date",
+                            SubTitle = _prayers.HijriDate,
+                            RoundedIcon = true,
+                            IcoPath = $"Icons/date.png",
+                            Score = 101000
+                        };
+                        resultList.Add(resultDate);
+                    }
+                }
+                else if (_settings.Globally) {
+                    var _pray = _prayers.PrayerTimesSorted.FirstOrDefault();
+                    resultList.Add(new Result
                     {
                         Title = $"{_pray.Key}",
                         SubTitle = $"{_pray.Value[2]} | {_pray.Value[0]}",
                         RoundedIcon = true,
                         IcoPath = $"Icons/{_pray.Key}.png",
-                        //Score = Convert.ToInt32(_pray.Value[1])
-                        Score = Score
-                    };
-
-                    if (!CurrentPray && _pray.Key == _prayers.PrayerTimesSorted.Keys.First())
-                    {
-                        result.SubTitle = IdentifierCounDown(result.SubTitle);
-
-                        if (_settings.Refresh)
-                        {
-                            Task.Run(() =>
-                            {
-                                Thread.Sleep(500);
-                                _context.API.ReQuery();
-                                Thread.Sleep(500);
-                            });
-                        }
-                        resultList.Add(result);
-
-                        break;
-                    }
-                    else if (!CurrentPray)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        resultList.Add(result);
-                    }
-
-                }
-                if (_settings.HijriDate && CurrentPray)
-                {
-                    var resultDate = new Result
-                    {
-                        Title = $"Hijri date",
-                        SubTitle = _prayers.HijriDate,
-                        RoundedIcon = true,
-                        IcoPath = $"Icons/date.png",
-                        Score = 101000
-                    };
-                    resultList.Add(resultDate);
+                    });
+                    return resultList;
                 }
 
             }

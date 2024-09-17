@@ -12,7 +12,7 @@ namespace Flow.Launcher.Plugin.Azan
         }
         public bool Timeformat24 {get; set;} = false;
         public bool Refresh {get; set;} = true;
-
+        public bool Globally {get; set;} = false;
         
         private string _duration = "30";
         public string Duration

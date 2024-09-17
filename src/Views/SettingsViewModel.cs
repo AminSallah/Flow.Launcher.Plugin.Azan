@@ -24,6 +24,18 @@ namespace Flow.Launcher.Plugin.Azan.ViewModels
             }
         }
 
+        public bool Globally 
+        {
+            get => Settings.Globally;
+            set
+            {
+                Settings.Globally = value;
+                OnPropertyChanged(nameof(Globally));
+            }
+        }
+
+        
+
 
 
         public Settings Settings { get; set; }

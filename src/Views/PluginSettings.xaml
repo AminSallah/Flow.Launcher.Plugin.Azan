@@ -153,6 +153,20 @@
         <Border Style="{DynamicResource SettingGroupBox}">
             <ItemsControl Style="{StaticResource SettingGrid}">
                 <StackPanel Style="{StaticResource TextPanel}">
+                    <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Globally Home Panel" />
+                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="When enabled, time of current prayer will be displayed in your query results, even if the plugin keyword is not entered." />
+                </StackPanel>
+                <ui:ToggleSwitch
+            Grid.Column="2"
+            IsOn="{Binding Settings.Globally}"
+            Toggled="OnToggleSwitchToggled"
+            Style="{DynamicResource SideToggleSwitch}" />
+            </ItemsControl>
+        </Border>
+
+        <Border Style="{DynamicResource SettingGroupBox}">
+            <ItemsControl Style="{StaticResource SettingGrid}">
+                <StackPanel Style="{StaticResource TextPanel}">
                     <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Hijri Date" />
                     <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="When enabled, the Hijri Date will be displayed at the top of the prayers menu." />
                 </StackPanel>
@@ -166,7 +180,7 @@
             <ItemsControl Style="{StaticResource SettingGrid}">
                 <StackPanel Style="{StaticResource TextPanel}">
                     <TextBlock Style="{DynamicResource SettingTitleLabel}" Text="Sticky Home Panel" />
-                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="When enabled, time of current pray will be refreshed every second, to get out of sticky mode press space." />
+                    <TextBlock Style="{DynamicResource SettingSubTitleLabel}" Text="When enabled, time of current prayer will be refreshed every second, to get out of sticky mode press space." />
                 </StackPanel>
                 <ui:ToggleSwitch
             Grid.Column="2"
@@ -238,7 +252,7 @@
                     </ItemsControl>
                 </Grid>
             </Expander.Header>
-                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                <WrapPanel Margin="50,25,50,25" Orientation="Horizontal" HorizontalAlignment="Center">
                     <CheckBox Content="Imsak"  Margin="7"  IsChecked="{Binding Settings.Imsak}"/>
                     <CheckBox Content="Fajr"  Margin="7"  IsChecked="{Binding Settings.Fajr}"/>
                     <CheckBox Content="Sunrise"  Margin="7"  IsChecked="{Binding Settings.Sunrise}"/>
@@ -249,7 +263,7 @@
                     <CheckBox Content="Isha"  Margin="7"  IsChecked="{Binding Settings.Isha}"/>
                     <CheckBox Content="Firstthird"  Margin="7"  IsChecked="{Binding Settings.Firstthird}"/>
                     <CheckBox Content="Lastthird"  Margin="7"  IsChecked="{Binding Settings.Lastthird}"/>
-                </StackPanel>
+                </WrapPanel>
             </Expander>
         </Border>
 
